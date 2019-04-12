@@ -7,7 +7,6 @@
 
 <script>
 import Players from '@/components/Players.vue'
-import gql from 'graphql-tag'
 
 export default {
   components: {

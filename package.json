@@ -45,21 +45,11 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {
-      "graphql/template-strings": [
-        "error",
-        {
-          "env": "literal",
-          "projectName": "app"
-        }
-      ]
-    },
+    "rules": {},
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "plugins": [
-      "graphql"
-    ]
+    "plugins": []
   },
   "postcss": {
     "plugins": {

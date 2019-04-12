@@ -2,7 +2,7 @@
 <div id="players">
   <ul>
     <li v-for="player in players" :key="player._id">
-      {{ player }}
+      {{ player.name }}
     </li>
   </ul>
 </div>
