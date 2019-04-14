@@ -1,5 +1,21 @@
 <template>
   <div id="players">
+
+    <form action="Players.vue" method="post">
+      <input type="text" name="name" v-model="name">
+      <input type="num" name="wins" v-model="wins">
+      <input type="num" name="losses" v-model="losses">
+      <input type="text" name="race" v-model="race">
+      <input type="text" name="realm" v-model="realmId">
+      <input type="submit" name="submit">
+    </form>
+
+    <p>{{ name }}</p>
+    <p>{{ wins }}</p>
+    <p>{{ losses }}</p>
+    <p>{{ race }}</p>
+    <p>{{ realmId }}</p>
+
     <ul>
       <li v-for="player in players" :key="player._id">{{ player.name }}</li>
     </ul>
@@ -17,76 +33,59 @@ export default {
       wins: 0,
       losses: 0,
       race: "",
-      realm: ""
+      realmId: ""
     };
   },
   methods: {
-    addPlayer() {
-      //const playerName = this.playerName;
-      const playerName = 'Test';
-      const playerWins = 0;
-      const playerLosses = 0;
-      const playerRace = 'Human';
-      const _id = '5ca1984ee03dd80007aa008e';
-
-      this.apollo.mutate({
-        mutation: gql`
-          mutation ($name: String!, 
-          wins: Int!, 
-          losses: Int!, 
-          race: String!, 
-          _id: String!) {
-            createPlayer(name: $name, 
-            wins: $wins, 
-            losses: $losses, 
-            race: $race, 
-            _id: $_id) {
-              name
-              wins
-              losses
-              race
-              realm: {
-                connect: {
-                  _id
-                }
-              }
+    createPlayer() {
+      const query = gql`
+        mutation CreatePlayer(
+          $pName: String!
+          $pWins: Int!
+          $pLosses: Int!
+          $pRace: String!
+          $pRealmId: String!
+        ) {
+          createPlayer(
+            data: {
+              name: $pName
+              wins: $pWins
+              losses: $pLosses
+              race: $pRace
+              realm: { connect: { _id: $pRealmId } }
             }
-          }`,
-        variables: {
-          name: playerName,
-          wins: playerWins,
-          losses: playerLosses,
-          race: playerRace,
-          _id: _id
-        },
-        update: (store, { data: { createPlayer }}) => {
-          const data = store.readQuery({ query: PLAYERS_QUERY})
-          data.players.push(createPlayer);
-          store.writeQuery({ query: PLAYERS_QUERY, data });
-        },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          createPlayer: {
-            __typename: 'Player',
-            id: -1,
-            name: playerName,
-            wins: playerWins,
-            losses: playerLosses,
-            race: playerRace,
-            _id: _id
+          ) {
+            _id
+            name
+            wins
+            losses
+            race
+            realm {
+              name
+            }
           }
-        },
+        }
+      `;
+      
+      const {
+        name,
+        wins,
+        losses,
+        race,
+        realmId
+      } = this.data;
 
-      }).then((data) => {
-        console.log(data);
-      }).catch((err) => {
-        console.log(err);
-        const playerName = '';
-        const playerWins = 0;
-        const playerLosses = 0;
-        const playerRace = '';
-        const _id = '';
-      });
+      this.apollo.mutate( {
+        mutation: query,
+        variables: {
+          name,
+          wins,
+          losses,
+          race,
+          realmId
+        }
+      })
+      
     }
   },
   apollo: {
