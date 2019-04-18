@@ -1,12 +1,27 @@
 <template>
   <div id="players">
     <div>
-      <form method="POST">
-        <input type="text" name="Name" v-model="name">
-        <input type="number" name="Wins" v-model="wins">
-        <input type="number" name="Losses" v-model="losses">
-        <input type="text" name="Race" v-model="race">
-        <input type="text" name="Realm" v-model="realmId">
+      <form>
+        <div>
+          <span>Name:</span>
+          <input type="text" name="Name" v-model="name">
+        </div>
+        <div>
+          <span>Wins:</span>
+          <input type="text" name="Wins" v-model="wins">
+        </div>
+        <div>
+          <span>Losses:</span>
+          <input type="text" name="Losses" v-model="losses">
+        </div>
+        <div>
+          <span>Race:</span>
+          <input type="text" name="Race" v-model="race">
+        </div>
+        <div>
+          <span>Realm ID:</span>
+          <input type="text" name="Realm" v-model="id">
+        </div>
       </form>
       <button @click="createPlayer">Create Player</button>
     </div>
@@ -15,7 +30,7 @@
     <p>Wins: {{ wins }}</p>
     <p>Losses: {{ losses }}</p>
     <p>Race: {{ race }}</p>
-    <p>Realm ID: {{ realmId }}</p>
+    <p>Realm ID: {{ id }}</p>
 
     <ul>
       <li v-for="player in players" :key="player._id">{{ player.name }}</li>
@@ -34,59 +49,41 @@ export default {
       wins: 0,
       losses: 0,
       race: "",
-      realmId: ""
+      id: ""
+      
     };
   },
   methods: {
     createPlayer() {
-      const name = this.name;
-      const wins = this.wins;
-      const losses = this.losses;
-      const race = this.race;
-      const realmId = this.realmId;
-
-      this.name = "";
-      this.wins = 0;
-      this.losses = 0;
-      this.race = "";
-      this.realmId = "";
-
-      this.$apollo.mutate({
-        mutation: gql`
-          mutation createPlayer(
-            $name: String!
-            $wins: Int!
-            $losses: Int!
-            $race: String!
-            $_id: String!
-          ) {
-            createPlayer(
-              data: {
-                name: $name
-                wins: $wins
-                losses: $losses
-                race: $race
-                realm: { connect: { _id: $_id } }
-              }
-            ) {
-              _id
-              name
-              realm {
-                name
+      this.$apollo
+        .mutate({
+          mutation: gql`
+           mutation CreatePlayer($data: PlayerCreateInput!) {
+             createPlayer(data: $data) {
+               _id
+             }
+           }
+          `,
+          variables: {
+            data: {
+              name: this.name,
+              wins: Number(this.wins),
+              losses: Number(this.losses),
+              race: this.race,
+              realm: {
+                connect: {
+                  _id: this.id
+                }
               }
             }
           }
-        `,
-        variables: {
-          name: name,
-          wins: wins,
-          losses: losses,
-          race: race,
-          _id: realmId
-        }
-      })
-      .then(result => console.log(result))
-      .catch(error => console.log(error));
+        })
+        .then(result => {
+          console.log(result.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   },
   apollo: {
@@ -102,4 +99,10 @@ export default {
 </script>
 
 <style>
+</style>
+
+<style scoped>
+input {
+  border: 1px solid #f2f2f2;
+}
 </style>
