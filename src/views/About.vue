@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h4 class="display-1">GraphQL</h4>
     <Players/>
   </div>
 </template>

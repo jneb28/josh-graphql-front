@@ -1,9 +1,9 @@
 <template>
   <div id="players">
-    <v-layout>
+    <v-layout justify-center mb-5>
       <v-flex xs6>
-        <v-tabs slider-color="grey lighten-4">
-          <v-tab color="">Create</v-tab>
+        <v-tabs card color="grey darken-4" slider-color="grey lighten-4">
+          <v-tab color>Create</v-tab>
           <v-tab-item>
             <v-card flat>
               <v-form>
@@ -39,7 +39,7 @@
                   </v-layout>
                 </v-container>
               </v-form>
-              <v-btn @click="createPlayer">Submit</v-btn>
+              <v-btn depressed color="grey darken-2" @click="createPlayer">Submit</v-btn>
             </v-card>
           </v-tab-item>
 
@@ -55,7 +55,7 @@
                   </v-layout>
                 </v-container>
               </v-form>
-              <v-btn @click="deletePlayer">Submit</v-btn>
+              <v-btn depressed color="grey darken-2" @click="deletePlayer">Submit</v-btn>
             </v-card>
           </v-tab-item>
 
@@ -101,16 +101,80 @@
                   </v-layout>
                 </v-container>
               </v-form>
-              <v-btn @click="updatePlayer">Submit</v-btn>
+              <v-btn depressed color="grey darken-2" @click="updatePlayer">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab>Find Player</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="playerId" label="Player ID"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click>Submit</v-btn>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab>Find Realm</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="realmId" label="Realm ID"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click>Submit</v-btn>
             </v-card>
           </v-tab-item>
         </v-tabs>
       </v-flex>
     </v-layout>
 
-    <ul>
-      <li v-for="player in players" :key="player._id">{{ player.name }}</li>
-    </ul>
+    <v-layout row>
+      <v-flex xs12 >
+        <v-card flat>
+          <v-toolbar flat color="grey darken-4" dark>
+            <v-toolbar-title>Players</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+
+          <v-list three-line dense>
+            <v-list-group
+              v-for="player in players"
+              :key="player._id"
+              :prepend-icon="icon.type"
+              no-action
+            >
+              <template v-slot:activator>
+                <v-list-tile>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ player.name }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+
+              <v-list-tile>
+                <v-list-tile-content>
+                  <v-list-tile-title>Wins: {{ player.wins }}</v-list-tile-title>
+                  <v-list-tile-title>Losses: {{ player.losses }}</v-list-tile-title>
+                  <v-list-tile-title>Race: {{ player.race }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list-group>
+          </v-list>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
@@ -126,7 +190,10 @@ export default {
       losses: 0,
       race: "",
       playerId: "",
-      realmId: ""
+      realmId: "",
+      icon: {
+        type: "account_circle"
+      }
     };
   },
   methods: {
@@ -162,11 +229,11 @@ export default {
           console.log(error);
         });
 
-        this.name = "";
-        this.wins = 0;
-        this.losses = 0;
-        this.race = "";
-        this.realmId = "";
+      this.name = "";
+      this.wins = 0;
+      this.losses = 0;
+      this.race = "";
+      this.realmId = "";
     },
     deletePlayer() {
       this.$apollo
@@ -192,17 +259,20 @@ export default {
           console.log(error);
         });
 
-        this.name = "";
-        this.wins = 0;
-        this.losses = 0;
-        this.race = "";
-        this.playerId = "";
+      this.name = "";
+      this.wins = 0;
+      this.losses = 0;
+      this.race = "";
+      this.playerId = "";
     },
     updatePlayer() {
       this.$apollo
         .mutate({
           mutation: gql`
-            mutation UpdatePlayer($data: PlayerUpdateInput!, $where: PlayerWhereUniqueInput!) {
+            mutation UpdatePlayer(
+              $data: PlayerUpdateInput!
+              $where: PlayerWhereUniqueInput!
+            ) {
               updatePlayer(data: $data, where: $where) {
                 _id
               }
@@ -233,12 +303,12 @@ export default {
           console.log(error);
         });
 
-        this.playerId = "";
-        this.name = "";
-        this.wins = 0;
-        this.losses = 0;
-        this.race = "";
-        this.realmId = "";
+      this.playerId = "";
+      this.name = "";
+      this.wins = 0;
+      this.losses = 0;
+      this.race = "";
+      this.realmId = "";
     }
   },
   apollo: {
@@ -246,6 +316,9 @@ export default {
       query GetAllPlayers {
         players {
           name
+          wins
+          losses
+          race
         }
       }
     `
