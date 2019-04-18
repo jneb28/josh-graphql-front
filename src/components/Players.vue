@@ -1,19 +1,21 @@
 <template>
   <div id="players">
     <div>
-      <input type="text" name="Name" v-model="name">
-      <input type="number" name="Wins" v-model="wins">
-      <input type="number" name="Losses" v-model="losses">
-      <input type="text" name="Race" v-model="race">
-      <input type="text" name="Realm" v-model="realmId">
-      <button @click="createPlayer()">Create Player</button>
+      <form method="POST">
+        <input type="text" name="Name" v-model="name">
+        <input type="number" name="Wins" v-model="wins">
+        <input type="number" name="Losses" v-model="losses">
+        <input type="text" name="Race" v-model="race">
+        <input type="text" name="Realm" v-model="realmId">
+      </form>
+      <button @click="createPlayer">Create Player</button>
     </div>
 
-    <p>{{ name }}</p>
-    <p>{{ wins }}</p>
-    <p>{{ losses }}</p>
-    <p>{{ race }}</p>
-    <p>{{ realmId }}</p>
+    <p>Name: {{ name }}</p>
+    <p>Wins: {{ wins }}</p>
+    <p>Losses: {{ losses }}</p>
+    <p>Race: {{ race }}</p>
+    <p>Realm ID: {{ realmId }}</p>
 
     <ul>
       <li v-for="player in players" :key="player._id">{{ player.name }}</li>
@@ -51,27 +53,24 @@ export default {
 
       this.$apollo.mutate({
         mutation: gql`
-          mutation CreatePlayer(
-            $pName: String!
-            $pWins: Int!
-            $pLosses: Int!
-            $pRace: String!
-            $pRealmId: String!
+          mutation createPlayer(
+            $name: String!
+            $wins: Int!
+            $losses: Int!
+            $race: String!
+            $_id: String!
           ) {
             createPlayer(
               data: {
-                name: $pName
-                wins: $pWins
-                losses: $pLosses
-                race: $pRace
-                realm: { connect: { _id: $pRealmId } }
+                name: $name
+                wins: $wins
+                losses: $losses
+                race: $race
+                realm: { connect: { _id: $_id } }
               }
             ) {
               _id
               name
-              wins
-              losses
-              race
               realm {
                 name
               }
@@ -79,13 +78,15 @@ export default {
           }
         `,
         variables: {
-          name,
-          wins,
-          losses,
-          race,
-          realmId
+          name: name,
+          wins: wins,
+          losses: losses,
+          race: race,
+          _id: realmId
         }
-      });
+      })
+      .then(result => console.log(result))
+      .catch(error => console.log(error));
     }
   },
   apollo: {
