@@ -117,7 +117,7 @@
                   </v-layout>
                 </v-container>
               </v-form>
-              <v-btn depressed color="grey darken-2" @click>Submit</v-btn>
+              <v-btn depressed color="grey darken-2" @click="findPlayer">Submit</v-btn>
             </v-card>
           </v-tab-item>
 
@@ -133,43 +133,116 @@
                   </v-layout>
                 </v-container>
               </v-form>
-              <v-btn depressed color="grey darken-2" @click>Submit</v-btn>
+              <v-btn depressed color="grey darken-2" @click="findRealm">Submit</v-btn>
             </v-card>
           </v-tab-item>
         </v-tabs>
       </v-flex>
     </v-layout>
 
+    <v-layout row mb-2>
+      <v-flex v-if="playerQuery" xs6 mr-1>
+        <v-card flat v-for="player in playerQuery" :key="player._id">
+          <v-card-title class="grey darken-4" primary-title>
+            <v-icon large left>account_circle</v-icon>
+            <div>
+              <div class="headline">{{ player.name }}</div>
+              <span class="grey--text">{{ player._id }}</span>
+            </div>
+          </v-card-title>
+          <v-card flat>
+            <v-card-text>Wins: {{ player.wins }}</v-card-text>
+            <v-card-text>Losses: {{ player.losses }}</v-card-text>
+            <v-card-text>Race: {{ player.race }}</v-card-text>
+            <v-card-text>Realm ID: {{ player.realm._id }}</v-card-text>
+            <v-card-text>Realm Name: {{ player.realm.name }}</v-card-text>
+          </v-card>
+        </v-card>
+      </v-flex>
+
+      <v-flex v-if="realmQuery" xs6 ml-1>
+        <v-card flat v-for="realm in realmQuery" :key="realm._id">
+          <v-card-title class="grey darken-4" primary-title>
+            <v-icon large left>language</v-icon>
+            <div>
+              <div class="headline">{{ realm.name }}</div>
+              <span class="grey--text">{{ realm._id }}</span>
+            </div>
+          </v-card-title>
+          <v-card flat>
+            <v-card-text class="title">Population:</v-card-text>
+            <v-list v-for="pop in realm.population" :key="pop._id" two-line>
+              <v-list-tile>
+                <v-list-tile-content>
+                  <v-card-text>{{ pop.name }}</v-card-text>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-card>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
     <v-layout row>
-      <v-flex xs12 >
+      <v-flex v-if="$apollo.queries.players.loading" xs6 mr-1>
+        <span>Loading players...</span>
+      </v-flex>
+      <v-flex v-else xs6 mr-1>
         <v-card flat>
           <v-toolbar flat color="grey darken-4" dark>
             <v-toolbar-title>Players</v-toolbar-title>
-            <v-spacer></v-spacer>
           </v-toolbar>
-
-          <v-list three-line dense>
-            <v-list-group
-              v-for="player in players"
-              :key="player._id"
-              :prepend-icon="icon.type"
-              no-action
-            >
+          <v-list v-for="player in players" :key="player._id">
+            <v-list-group>
               <template v-slot:activator>
-                <v-list-tile>
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ player.name }}</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
+                <v-card-title primary-title>
+                  <v-icon large left>account_circle</v-icon>
+                  <div>
+                    <div class="headline">{{ player.name }}</div>
+                    <span class="grey--text">{{ player._id }}</span>
+                  </div>
+                </v-card-title>
               </template>
+              <v-card>
+                <v-card-text>Wins: {{ player.wins }}</v-card-text>
+                <v-card-text>Losses: {{ player.losses }}</v-card-text>
+                <v-card-text>Race: {{ player.race }}</v-card-text>
+                <v-card-text>Realm: {{ player.realm.name }}</v-card-text>
+              </v-card>
+            </v-list-group>
+          </v-list>
+        </v-card>
+      </v-flex>
 
-              <v-list-tile>
-                <v-list-tile-content>
-                  <v-list-tile-title>Wins: {{ player.wins }}</v-list-tile-title>
-                  <v-list-tile-title>Losses: {{ player.losses }}</v-list-tile-title>
-                  <v-list-tile-title>Race: {{ player.race }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
+      <v-flex v-if="$apollo.queries.realms.loading" xs6 ml-1>
+        <span>Loading realms...</span>
+      </v-flex>
+      <v-flex v-else xs6 ml-1>
+        <v-card flat>
+          <v-toolbar flat color="grey darken-4" dark>
+            <v-toolbar-title>Realms</v-toolbar-title>
+          </v-toolbar>
+          <v-list v-for="realm in realms" :key="realm._id">
+            <v-list-group>
+              <template v-slot:activator>
+                <v-card-title primary-title>
+                  <v-icon large left>language</v-icon>
+                  <div>
+                    <div class="headline">{{ realm.name }}</div>
+                    <span class="grey--text">{{ realm._id }}</span>
+                  </div>
+                </v-card-title>
+              </template>
+              <v-card>
+                <v-card-text class="title">Population:</v-card-text>
+                <v-list v-for="pop in realm.population" :key="pop._id" two-line>
+                  <v-list-tile>
+                    <v-list-tile-content>
+                      <v-card-text>{{ pop.name }}</v-card-text>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </v-list>
+              </v-card>
             </v-list-group>
           </v-list>
         </v-card>
@@ -185,15 +258,17 @@ export default {
   data() {
     return {
       players: [],
+      realms: [],
+      playerQuery: [],
+      realmQuery: [],
       name: "",
       wins: 0,
       losses: 0,
       race: "",
       playerId: "",
       realmId: "",
-      icon: {
-        type: "account_circle"
-      }
+      result: "",
+      error: ""
     };
   },
   methods: {
@@ -309,16 +384,97 @@ export default {
       this.losses = 0;
       this.race = "";
       this.realmId = "";
+    },
+    findPlayer() {
+      this.$apollo
+        .query({
+          query: gql`
+            query FindPlayer($where: PlayerWhereUniqueInput!) {
+              player(where: $where) {
+                _id
+                name
+                wins
+                losses
+                race
+                realm {
+                  _id
+                  name
+                }
+              }
+            }
+          `,
+          variables: {
+            where: {
+              _id: this.playerId
+            }
+          }
+        })
+        .then(result => {
+          this.playerQuery = result.data;
+          console.log(result.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      this.playerId = "";
+    },
+    findRealm() {
+      this.$apollo
+        .query({
+          query: gql`
+            query FindRealm($where: RealmWhereUniqueInput!) {
+              realm(where: $where) {
+                _id
+                name
+                population {
+                  _id
+                  name
+                }
+              }
+            }
+          `,
+          variables: {
+            where: {
+              _id: this.realmId
+            }
+          }
+        })
+        .then(result => {
+          this.realmQuery = result.data;
+          console.log(result.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      this.realmId = "";
     }
   },
   apollo: {
     players: gql`
       query GetAllPlayers {
         players {
+          _id
           name
           wins
           losses
           race
+          realm {
+            name
+          }
+        }
+      }
+    `,
+    realms: gql`
+      query GetAllRealms {
+        realms {
+          _id
+          name
+          population {
+            _id
+            name
+          }
         }
       }
     `
