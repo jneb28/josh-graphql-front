@@ -1,143 +1,290 @@
 <template>
-  <v-container>
-    <v-layout
-      text-xs-center
-      wrap
-    >
-      <v-flex xs12>
-        <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
-          contain
-          height="200"
-        ></v-img>
-      </v-flex>
+  <div id="helloworld">
+    <v-layout justify-center mb-5>
+      <v-flex xs6>
+        <v-tabs card color="grey darken-4" slider-color="grey lighten-4">
+          <v-tab color>Create</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="name" label="Player name"></v-text-field>
+                    </v-flex>
+                  </v-layout>
 
-      <v-flex mb-4>
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Vuetify
-        </h1>
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br>please join our online
-          <a href="https://community.vuetifyjs.com" target="_blank">Discord Community</a>
-        </p>
-      </v-flex>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="wins" label="Player wins"></v-text-field>
+                    </v-flex>
+                  </v-layout>
 
-      <v-flex
-        mb-5
-        xs12
-      >
-        <h2 class="headline font-weight-bold mb-3">What's next?</h2>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="losses" label="Player losses"></v-text-field>
+                    </v-flex>
+                  </v-layout>
 
-        <v-layout justify-center>
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-layout>
-      </v-flex>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="race" label="Player race"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click="createPlayer">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
 
-      <v-flex
-        xs12
-        mb-5
-      >
-        <h2 class="headline font-weight-bold mb-3">Important Links</h2>
+          <v-tab>Delete</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="playerId" label="Player ID"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click="deletePlayer(playerId)">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
 
-        <v-layout justify-center>
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-layout>
-      </v-flex>
+          <v-tab>Update</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="playerId" label="Player ID"></v-text-field>
+                    </v-flex>
+                  </v-layout>
 
-      <v-flex
-        xs12
-        mb-5
-      >
-        <h2 class="headline font-weight-bold mb-3">Ecosystem</h2>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="name" label="Player name"></v-text-field>
+                    </v-flex>
+                  </v-layout>
 
-        <v-layout justify-center>
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-layout>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="wins" label="Player wins"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="losses" label="Player losses"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="race" label="Player race"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click="updatePlayer(playerId)">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab>Find Player</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <v-text-field v-model="playerId" label="Player ID"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click="getPlayer(playerId)">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab>Top 10</v-tab>
+          <v-tab-item>
+            <v-card flat>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex xs12>
+                      <!-- <v-text-field v-model="realmId" label="Realm ID"></v-text-field> -->
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+              <v-btn depressed color="grey darken-2" @click="getTop10">Submit</v-btn>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
       </v-flex>
     </v-layout>
-  </v-container>
+
+    <v-layout justify-center row mb-2>
+      <v-flex v-if="playerQuery.length !== 0" xs6 mr-1>
+        <v-card flat>
+          <v-card-title class="grey darken-4" primary-title>
+            <v-icon large left>account_circle</v-icon>
+            <div>
+              <div class="headline">{{ playerQuery.name }}</div>
+              <span class="grey--text">{{ playerQuery._id }}</span>
+            </div>
+          </v-card-title>
+          <v-card flat>
+            <v-card-text>Wins: {{ playerQuery.wins }}</v-card-text>
+            <v-card-text>Losses: {{ playerQuery.losses }}</v-card-text>
+            <v-card-text>Race: {{ playerQuery.race }}</v-card-text>
+          </v-card>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
+    <v-layout justify-center row>
+      <v-flex xs6 mr-1>
+        <v-card flat>
+          <v-toolbar flat color="grey darken-4" dark>
+            <v-toolbar-title>Players</v-toolbar-title>
+          </v-toolbar>
+          <v-list v-for="player in players" :key="player._id">
+            <v-list-group>
+              <template v-slot:activator>
+                <v-card-title primary-title>
+                  <v-icon large left>account_circle</v-icon>
+                  <div>
+                    <div class="headline">{{ player.name }}</div>
+                    <span class="grey--text">{{ player._id }}</span>
+                  </div>
+                </v-card-title>
+              </template>
+              <v-card>
+                <v-card-text>Wins: {{ player.wins }}</v-card-text>
+                <v-card-text>Losses: {{ player.losses }}</v-card-text>
+                <v-card-text>Race: {{ player.race }}</v-card-text>
+              </v-card>
+            </v-list-group>
+          </v-list>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      ecosystem: [
-        {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader'
-        },
-        {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify'
-        },
-        {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify'
-        }
-      ],
-      importantLinks: [
-        {
-          text: 'Documentation',
-          href: 'https://vuetifyjs.com'
-        },
-        {
-          text: 'Chat',
-          href: 'https://community.vuetifyjs.com'
-        },
-        {
-          text: 'Made with Vuetify',
-          href: 'https://madewithvuetifyjs.com'
-        },
-        {
-          text: 'Twitter',
-          href: 'https://twitter.com/vuetifyjs'
-        },
-        {
-          text: 'Articles',
-          href: 'https://medium.com/vuetify'
-        }
-      ],
-      whatsNext: [
-        {
-          text: 'Explore components',
-          href: 'https://vuetifyjs.com/components/api-explorer'
-        },
-        {
-          text: 'Select a layout',
-          href: 'https://vuetifyjs.com/layout/pre-defined'
-        },
-        {
-          text: 'Frequently Asked Questions',
-          href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions'
-        }
+import axios from "axios";
 
-      ]
-    })
+export default {
+  data: () => ({
+    players: [],
+    realms: [],
+    playerQuery: [],
+    realmQuery: [],
+    name: "",
+    wins: 0,
+    losses: 0,
+    race: "",
+    playerId: "",
+    realmId: "",
+    result: "",
+    error: ""
+  }),
+  mounted() {
+    const url = "http://localhost:3000/";
+    axios
+      .get(url)
+      .then(res => {
+        this.players = res.data;
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
+  },
+  methods: {
+    createPlayer() {
+      const url = "http://localhost:3000/create-player";
+      axios
+        .post(url, {
+          name: this.name,
+          wins: Number(this.wins),
+          losses: Number(this.losses),
+          race: this.race
+        })
+        .then(function(res) {
+          console.log(res);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      this.name = "";
+      this.wins = 0;
+      this.losses = 0;
+      this.race = "";
+      this.realmId = "";
+    },
+    deletePlayer(playerId) {
+      const url = `http://localhost:3000/delete-player/${playerId}`;
+      axios
+        .delete(url)
+        .then(function(res) {
+          console.log(res);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      this.playerId = "";
+    },
+    updatePlayer(playerId) {
+      const url = `http://localhost:3000/update-player/${playerId}`;
+      axios
+        .put(url, {
+          name: this.name,
+          wins: Number(this.wins),
+          losses: Number(this.losses),
+          race: this.race
+        })
+        .then(function(res) {
+          console.log(res);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      this.playerId = "";
+      this.name = "";
+      this.wins = 0;
+      this.losses = 0;
+      this.race = "";
+    },
+    getPlayer(playerId) {
+      const url = `http://localhost:3000/view-player/${playerId}`;
+      axios
+        .get(url)
+        .then(res => {
+          this.playerQuery = res.data;
+          console.log(res.data);
+        })
+        .catch(err => console.log(err));
+
+      this.playerId = "";
+    },
+    getTop10() {
+      const url = "http://localhost:3000/top10";
+      axios
+        .get(url)
+        .then(res => {
+          this.players = res.data;
+          console.log(res.data);
+        })
+        .catch(err => console.log(err));
+    }
   }
+};
 </script>
