@@ -4,8 +4,8 @@
       <v-toolbar-title>Player Records</v-toolbar-title>
       <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
-          <v-btn flat to="/">Home</v-btn>
-          <v-btn flat to="/about">About</v-btn>
+          <v-btn flat to="/">REST</v-btn>
+          <v-btn flat to="/about">GraphQL</v-btn>
         </v-toolbar-items>
     </v-toolbar>
 

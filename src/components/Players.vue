@@ -34,7 +34,7 @@
 
                   <v-layout>
                     <v-flex xs12>
-                      <v-text-field v-model="realmId" label="Realm ID"></v-text-field>
+                      <v-text-field v-model="realm" label="Realm Name"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -96,7 +96,7 @@
 
                   <v-layout>
                     <v-flex xs12>
-                      <v-text-field v-model="realmId" label="Realm ID"></v-text-field>
+                      <v-text-field v-model="realm" label="Realm Name"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -128,7 +128,7 @@
                 <v-container>
                   <v-layout>
                     <v-flex xs12>
-                      <v-text-field v-model="realmId" label="Realm ID"></v-text-field>
+                      <v-text-field v-model="realm" label="Realm Name"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -140,8 +140,8 @@
       </v-flex>
     </v-layout>
 
-    <v-layout row mb-2>
-      <v-flex v-if="playerQuery" xs6 mr-1>
+    <v-layout row justify-center mb-2>
+      <v-flex v-if="playerQuery.length !== 0" xs6>
         <v-card flat v-for="player in playerQuery" :key="player._id">
           <v-card-title class="grey darken-4" primary-title>
             <v-icon large left>account_circle</v-icon>
@@ -154,40 +154,33 @@
             <v-card-text>Wins: {{ player.wins }}</v-card-text>
             <v-card-text>Losses: {{ player.losses }}</v-card-text>
             <v-card-text>Race: {{ player.race }}</v-card-text>
-            <v-card-text>Realm ID: {{ player.realm._id }}</v-card-text>
-            <v-card-text>Realm Name: {{ player.realm.name }}</v-card-text>
+            <v-card-text>Realm: {{ player.realm }}</v-card-text>
           </v-card>
         </v-card>
       </v-flex>
 
-      <v-flex v-if="realmQuery" xs6 ml-1>
-        <v-card flat v-for="realm in realmQuery" :key="realm._id">
+      <v-flex v-if="realmQuery.length !== 0" xs6>
+        <v-card flat v-for="player in realmQuery" :key="player._id">
           <v-card-title class="grey darken-4" primary-title>
             <v-icon large left>language</v-icon>
             <div>
-              <div class="headline">{{ realm.name }}</div>
-              <span class="grey--text">{{ realm._id }}</span>
+              <div class="headline">{{ player[0].realm }}</div>
             </div>
           </v-card-title>
-          <v-card flat>
-            <v-card-text class="title">Population:</v-card-text>
-            <v-list v-for="pop in realm.population" :key="pop._id" two-line>
-              <v-list-tile>
-                <v-list-tile-content>
-                  <v-card-text>{{ pop.name }}</v-card-text>
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
-          </v-card>
+          <v-list two-line v-for="data in player" :key="data._id">
+            <v-card-text>{{ data.name }}</v-card-text>
+            <v-card-text>{{ data._id }}</v-card-text>
+            <v-divider></v-divider>
+          </v-list>
         </v-card>
       </v-flex>
-    </v-layout>
+    </v-layout> 
 
-    <v-layout row>
-      <v-flex v-if="$apollo.queries.players.loading" xs6 mr-1>
+    <v-layout row justify-center>
+      <v-flex v-if="$apollo.queries.players.loading" xs6>
         <span>Loading players...</span>
       </v-flex>
-      <v-flex v-else xs6 mr-1>
+      <v-flex v-else xs6>
         <v-card flat>
           <v-toolbar flat color="grey darken-4" dark>
             <v-toolbar-title>Players</v-toolbar-title>
@@ -207,41 +200,7 @@
                 <v-card-text>Wins: {{ player.wins }}</v-card-text>
                 <v-card-text>Losses: {{ player.losses }}</v-card-text>
                 <v-card-text>Race: {{ player.race }}</v-card-text>
-                <v-card-text>Realm: {{ player.realm.name }}</v-card-text>
-              </v-card>
-            </v-list-group>
-          </v-list>
-        </v-card>
-      </v-flex>
-
-      <v-flex v-if="$apollo.queries.realms.loading" xs6 ml-1>
-        <span>Loading realms...</span>
-      </v-flex>
-      <v-flex v-else xs6 ml-1>
-        <v-card flat>
-          <v-toolbar flat color="grey darken-4" dark>
-            <v-toolbar-title>Realms</v-toolbar-title>
-          </v-toolbar>
-          <v-list v-for="realm in realms" :key="realm._id">
-            <v-list-group>
-              <template v-slot:activator>
-                <v-card-title primary-title>
-                  <v-icon large left>language</v-icon>
-                  <div>
-                    <div class="headline">{{ realm.name }}</div>
-                    <span class="grey--text">{{ realm._id }}</span>
-                  </div>
-                </v-card-title>
-              </template>
-              <v-card>
-                <v-card-text class="title">Population:</v-card-text>
-                <v-list v-for="pop in realm.population" :key="pop._id" two-line>
-                  <v-list-tile>
-                    <v-list-tile-content>
-                      <v-card-text>{{ pop.name }}</v-card-text>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </v-list>
+                <v-card-text>Realm: {{ player.realm }}</v-card-text>
               </v-card>
             </v-list-group>
           </v-list>
@@ -258,17 +217,14 @@ export default {
   data() {
     return {
       players: [],
-      realms: [],
       playerQuery: [],
       realmQuery: [],
+      playerId: "",
       name: "",
       wins: 0,
       losses: 0,
       race: "",
-      playerId: "",
-      realmId: "",
-      result: "",
-      error: ""
+      realm: "",
     };
   },
   methods: {
@@ -288,27 +244,24 @@ export default {
               wins: Number(this.wins),
               losses: Number(this.losses),
               race: this.race,
-              realm: {
-                connect: {
-                  _id: this.realmId
-                }
-              }
+              realm: this.realm
             }
           }
         })
-        .then(result => {
-          this.$apollo.queries.AllPlayers.refetch();
-          console.log(result.data);
+        .then(res => {
+          this.$apollo.queries.players.refetch();
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          console.log(err)
         });
 
+      this.playerQuery = [];
+      this.realmQuery = [];
       this.name = "";
       this.wins = 0;
       this.losses = 0;
       this.race = "";
-      this.realmId = "";
+      this.realm = "";
     },
     deletePlayer() {
       this.$apollo
@@ -326,18 +279,16 @@ export default {
             }
           }
         })
-        .then(result => {
+        .then(res => {
           this.$apollo.queries.players.refetch();
-          console.log(result.data);
+          console.log(res.data);
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          console.log(err);
         });
 
-      this.name = "";
-      this.wins = 0;
-      this.losses = 0;
-      this.race = "";
+      this.playerQuery = [];
+      this.realmQuery = [];
       this.playerId = "";
     },
     updatePlayer() {
@@ -359,31 +310,29 @@ export default {
               wins: Number(this.wins),
               losses: Number(this.losses),
               race: this.race,
-              realm: {
-                connect: {
-                  _id: this.realmId
-                }
-              }
+              realm: this.realm
             },
             where: {
               _id: this.playerId
             }
           }
         })
-        .then(result => {
+        .then(res => {
           this.$apollo.queries.players.refetch();
-          console.log(result.data);
+          console.log(res.data);
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          console.log(err);
         });
 
+      this.playerQuery = [];
+      this.realmQuery = [];
       this.playerId = "";
       this.name = "";
       this.wins = 0;
       this.losses = 0;
       this.race = "";
-      this.realmId = "";
+      this.realm = "";
     },
     findPlayer() {
       this.$apollo
@@ -396,10 +345,7 @@ export default {
                 wins
                 losses
                 race
-                realm {
-                  _id
-                  name
-                }
+                realm
               }
             }
           `,
@@ -409,46 +355,46 @@ export default {
             }
           }
         })
-        .then(result => {
-          this.playerQuery = result.data;
-          console.log(result.data);
+        .then(res => {
+          this.playerQuery = res.data;
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          console.log(err);
         });
 
+      this.playerQuery = [];
+      this.realmQuery = [];
       this.playerId = "";
     },
     findRealm() {
       this.$apollo
         .query({
           query: gql`
-            query FindRealm($where: RealmWhereUniqueInput!) {
-              realm(where: $where) {
+            query FindRealm($where: PlayerWhereInput) {
+              players(where: $where) {
                 _id
                 name
-                population {
-                  _id
-                  name
-                }
+                realm
               }
             }
           `,
           variables: {
             where: {
-              _id: this.realmId
+              realm: this.realm
             }
           }
         })
-        .then(result => {
-          this.realmQuery = result.data;
-          console.log(result.data);
+        .then(res => {
+          this.realmQuery = res.data;
+          console.log(res.data.players);
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          console.log(err);
         });
 
-      this.realmId = "";
+      this.playerQuery = [];
+      this.realmQuery = [];
+      this.realm = "";
     }
   },
   apollo: {
@@ -460,21 +406,7 @@ export default {
           wins
           losses
           race
-          realm {
-            name
-          }
-        }
-      }
-    `,
-    realms: gql`
-      query GetAllRealms {
-        realms {
-          _id
-          name
-          population {
-            _id
-            name
-          }
+          realm
         }
       }
     `

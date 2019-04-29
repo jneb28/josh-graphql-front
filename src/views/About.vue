@@ -9,6 +9,7 @@
 import Players from '@/components/Players.vue'
 
 export default {
+  name: 'about',
   components: {
     Players
   }
