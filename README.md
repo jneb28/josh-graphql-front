@@ -1,29 +1,25 @@
 # josh-graphql-front
+A vue front-end project that uses my graphql and rest api
 
 ## Project setup
+Clone the repo
+
+```
+cd josh-graphql-front
+```
+
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## This project runs on localhost:8080
 
-### Run your tests
-```
-npm run test
-```
+## Ensure [GraphQL](https://github.com/jneb28/josh-graphql-prisma) and [REST](https://github.com/jneb28/josh-node-crud) APIs are running
 
-### Lints and fixes files
-```
-npm run lint
-```
+### [REST Endpoints](https://github.com/jneb28/josh-graphql-front/blob/master/src/components/HelloWorld.vue)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### [GraphQL API Endpoints](https://github.com/jneb28/josh-graphql-front/blob/master/src/components/Players.vue)
