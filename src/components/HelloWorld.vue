@@ -237,6 +237,16 @@ export default {
     playerId: "",
     realm: ""
   }),
+  created() {
+    const url = "http://localhost:3000/";
+    axios
+      .get(url)
+      .then(res => {
+        this.players = res.data;
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
+  },
   mounted() {
     const url = "http://localhost:3000/";
     axios
@@ -246,6 +256,18 @@ export default {
         console.log(res.data);
       })
       .catch(err => console.log(err));
+  },
+  watch: {
+    players: function(newPlayers, oldPlayers) {
+      const url = "http://localhost:3000/";
+      axios
+        .get(url)
+        .then(res => {
+          this.players = res.data;
+          console.log(res.data);
+        })
+        .catch(err => console.log(err));
+    }
   },
   methods: {
     createPlayer() {
