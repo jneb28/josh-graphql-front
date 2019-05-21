@@ -1,5 +1,5 @@
 # josh-graphql-front
-A vue front-end project that uses my graphql and rest api
+a vue app that uses my prisma-docker and node-crud apis
 
 ## Project setup
 Clone the repo
