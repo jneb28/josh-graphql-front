@@ -18,8 +18,8 @@ npm run serve
 
 ## This project runs on localhost:8080
 
-## Ensure [prisma-docker](https://github.com/jneb28/josh-prisma-docker) and [node-crud](https://github.com/jneb28/josh-node-crud) APIs are running
+## Ensure [prisma-docker](https://github.com/jneb28/josh-prisma-docker) and [node-crud](https://github.com/jneb28/josh-node-crud) projects are downloaded and running first!
 
-### [Node Endpoints](https://github.com/jneb28/josh-prisma-docker/blob/master/src/components/HelloWorld.vue)
+### [Node Endpoints](https://github.com/jneb28/josh-graphql-front/blob/master/src/components/HelloWorld.vue)
 
-### [GraphQL Endpoints](https://github.com/jneb28/josh-prisma-docker/blob/master/src/components/Players.vue)
+### [GraphQL Endpoints](https://github.com/jneb28/josh-graphql-front/blob/master/src/components/Players.vue)
